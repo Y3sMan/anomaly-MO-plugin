@@ -25,6 +25,7 @@ from .stalkeranomaly import XRSave
 
 
 
+
 def move_file(source, target):
     if not target.parent.exists():
         target.parent.mkdir(parents=True)
@@ -359,6 +360,7 @@ class StalkerAnomalyGame(BasicGame, mobase.IPluginFileMapper):
         self._organizer.onUserInterfaceInitialized(lambda win: self._organizer_onUiInitalized_event_handler())
         self._organizer.onAboutToRun(self._game_aboutToRun_event_handler)
         self._organizer.onFinishedRun(self._game_finished_event_handler)
+        self._organizer.onProfileCreated(self._organizer_onProfileCreated_event_handler)
         self._organizer.onProfileChanged(self._organizer_onProfileChanged_event_handler)
 
         if self._organizer.appVersion().displayString()[0:3].find('2.5') > 0:
@@ -380,16 +382,23 @@ class StalkerAnomalyGame(BasicGame, mobase.IPluginFileMapper):
     def _organizer_onUiInitalized_event_handler(self) -> bool:
         self.UiInitialized = True
 
-
-    def _organizer_onProfileChanged_event_handler(self, oldProfile, newProfile ):
-        profile_dir = Path( newProfile.absolutePath() )
-        profile_appdata = profile_dir.joinpath('saves/appdata')
-
+    def _organizer_onProfileCreated_event_handler(self, newProfile):
         root_game = Path( self.gameDirectory().absolutePath() )
         game_appdata = root_game.joinpath('appdata')
         mo_appdata = root_game.joinpath('mo__appdata')
 
         if newProfile.localSavesEnabled():
+            # if newProfile.
+            self.create_appdata_content(newProfile)
+            # # if Default profile exists
+            # default_pro = profile_dir.parent.joinpath('Default')
+        if mo_appdata.exists():
+            if game_appdata.exists():
+                # try:
+                game_appdata.rmdir()
+                # except():
+            mo_appdata.rename(game_appdata)
+
 
     def create_appdata_content(self, profile):
         profile_dir = Path( profile.absolutePath() )
