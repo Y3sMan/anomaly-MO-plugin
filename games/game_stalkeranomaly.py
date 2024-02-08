@@ -359,7 +359,6 @@ class StalkerAnomalyGame(BasicGame, mobase.IPluginFileMapper):
         self._organizer.onUserInterfaceInitialized(lambda win: self._organizer_onUiInitalized_event_handler())
         self._organizer.onAboutToRun(self._game_aboutToRun_event_handler)
         self._organizer.onFinishedRun(self._game_finished_event_handler)
-        self._organizer.onProfileCreated(self._organizer_onProfileCreated_event_handler)
         self._organizer.onProfileChanged(self._organizer_onProfileChanged_event_handler)
 
         if self._organizer.appVersion().displayString()[0:3].find('2.5') > 0:
