@@ -26,17 +26,11 @@ from .stalkeranomaly import XRSave
 
 
 def move_file(source, target):
-    # mobase.IFileTree.move( f'{_game_dir}/appdata_mo')
-    # game_tree = mobase.IFileTree()
-    # print_to_file(mobase.IFileTree.find(f'{_game_dir}/appdata'), type=mobase.FileTreeEntry.FileTypes.DIRECTORY)
     if not target.parent.exists():
         target.parent.mkdir(parents=True)
     shutil.move(str(source.resolve()), str(target.resolve()))
 
 def copy_file(source, target):
-    # mobase.IFileTree.move( f'{_game_dir}/appdata_mo')
-    # game_tree = mobase.IFileTree()
-    # print_to_file(mobase.IFileTree.find(f'{_game_dir}/appdata'), type=mobase.FileTreeEntry.FileTypes.DIRECTORY)
     if not target.parent.exists():
         target.parent.mkdir(parents=True)
     shutil.copyfile(str(source.resolve()), str(target.resolve()))
@@ -242,11 +236,6 @@ class StalkerAnomalyLocalSavegames(mobase.LocalSavegames):
     def __init__(self, myGameSaveDir):
         super().__init__()
         self._savesDir = myGameSaveDir.absolutePath()
-        # self._savesDir = str( Path( self._savesDir ).parent.absolute() )
-        # reset appdata folder
-        # if  Path(self._savesDir).parent.joinpath("mo__appdata").exists():
-        #     print_to_file('it exists')
-        #     move_file(Path(f'{self._savesDir}/mo__appdata'), Path(f'{_game_dir}/appdata'))
 
     def mappings(self, profile_save_dir):
         root_game = Path(self._savesDir).parent
@@ -378,7 +367,6 @@ class StalkerAnomalyGame(BasicGame, mobase.IPluginFileMapper):
             # self._organizer.onNextRefresh(self._organizer_onNextRefresh_event_handler, immediate_if_possible)
         else:
             pass
-            # print_to_file('not version 2.5')
 
     # version 2.5 or greater
     def _organizer_onNextRefresh_event_handler(self) -> bool:
