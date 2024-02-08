@@ -390,14 +390,40 @@ class StalkerAnomalyGame(BasicGame, mobase.IPluginFileMapper):
         mo_appdata = root_game.joinpath('mo__appdata')
 
         if newProfile.localSavesEnabled():
-            if not profile_appdata.exists():
-                profile_appdata.mkdir()
-                profile_appdata.joinpath('logs').mkdir()
-                profile_appdata.joinpath('savedgames').mkdir()
-                profile_appdata.joinpath('shaders_cache').mkdir()
-                profile_appdata.joinpath('screenshots').mkdir()
-                # if Default profile exists
-                default_pro = profile_dir.parent.joinpath('Default')
+
+    def create_appdata_content(self, profile):
+        profile_dir = Path( profile.absolutePath() )
+        profile_appdata = profile_dir.joinpath('saves/appdata')
+
+        if not profile_appdata.exists():
+            profile_appdata.mkdir()
+
+        if not profile_appdata.joinpath('logs').exists():
+            profile_appdata.joinpath('logs').mkdir()
+
+        if not profile_appdata.joinpath('savedgames').exists():
+            profile_appdata.joinpath('savedgames').mkdir()
+
+        if not profile_appdata.joinpath('shaders_cache').exists():
+            profile_appdata.joinpath('shaders_cache').mkdir()
+
+        if not profile_appdata.joinpath('screenshots').exists():
+            profile_appdata.joinpath('screenshots').mkdir()
+
+        if not profile_appdata.joinpath('user.ltx').exists():
+            (Path(  profile_appdata / "user.ltx"  )).write_text(" ")
+
+    def _organizer_onProfileChanged_event_handler(self, oldProfile, newProfile ):
+        root_game = Path( self.gameDirectory().absolutePath() )
+        game_appdata = root_game.joinpath('appdata')
+        mo_appdata = root_game.joinpath('mo__appdata')
+
+
+        if newProfile.localSavesEnabled():
+            # if newProfile.
+            self.create_appdata_content(newProfile)
+            # # if Default profile exists
+            # default_pro = profile_dir.parent.joinpath('Default')
         if mo_appdata.exists():
             if game_appdata.exists():
                 # try:
