@@ -238,30 +238,55 @@ class StalkerAnomalyLocalSavegames(mobase.LocalSavegames):
         super().__init__()
         self._savesDir = myGameSaveDir.absolutePath()
 
+    def create_appdata_content(self, profile_save_dir):
+        profile_dir = Path(profile_save_dir.absolutePath())
+        profile_appdata = profile_dir.joinpath('saves/appdata')
+
+        if not profile_appdata.exists():
+            profile_appdata.mkdir()
+
+        if not profile_appdata.joinpath('logs').exists():
+            profile_appdata.joinpath('logs').mkdir()
+
+        if not profile_appdata.joinpath('savedgames').exists():
+            profile_appdata.joinpath('savedgames').mkdir()
+
+        if not profile_appdata.joinpath('shaders_cache').exists():
+            profile_appdata.joinpath('shaders_cache').mkdir()
+
+        if not profile_appdata.joinpath('screenshots').exists():
+            profile_appdata.joinpath('screenshots').mkdir()
+
+        if not profile_appdata.joinpath('user.ltx').exists():
+            (Path(  profile_appdata / "user.ltx"  )).write_text(" ")
+
     def mappings(self, profile_save_dir):
         root_game = Path(self._savesDir).parent
 
-        appdata = root_game.joinpath('appdata')
-        mo_appdata = root_game.joinpath('mo__appdata')
-        if appdata.exists():
-            appdata.rename(mo_appdata)
-            # create empty appdata
-            appdata.mkdir()
 
-        
+        profile_src = profile_save_dir.absolutePath()   + '/appdata'
+        profile_dest = Path(self._savesDir)
+        profile_dest = str(profile_dest.resolve())
+        print(f'!{profile_src = }')
+        print(f'!{profile_dest = }')
 
-        src = profile_save_dir.absolutePath()  + '/appdata'
-        dest = self._savesDir
+        # if not Path(profile_src).exists():
+        #     Path(profile_src).mkdir()
 
+        root_src= Path(self._savesDir).parent.joinpath("appdata")
+        root_dest = Path(self._savesDir).parent.joinpath("mo__appdata")
+
+        root_src.rename(root_dest)
+        root_src.mkdir()
 
         return [
             mobase.Mapping(
-                source=src,
-                destination=dest,
+                source=profile_src,
+                destination=profile_dest,
                 is_directory=True,
                 create_target=True,
             )
-        ]
+            ]
 
     def prepareProfile(self, profile):
         return profile.localSavesEnabled()
@@ -341,10 +366,35 @@ class StalkerAnomalyGame(BasicGame, mobase.IPluginFileMapper):
 
     def listSaves(self, folder: QDir) -> List[mobase.ISaveGame]:
         save_games = super().listSaves(folder)
-        path = Path(folder.absolutePath() + '/savedgames') 
+        path = Path(folder.absolutePath() + '/savedgames')
         ext = self._mappings.savegameExtension.get()
         save_games.extend(StalkerAnomalySaveGame(f) for f in path.glob(f"*.{ext}"))
         return save_games
+
+
+
+    def create_appdata_content(self, profile):
+        profile_dir = Path( profile.absolutePath() )
+        profile_appdata = profile_dir.joinpath('saves/appdata')
+
+        if not profile_appdata.exists():
+            profile_appdata.mkdir()
+
+        if not profile_appdata.joinpath('logs').exists():
+            profile_appdata.joinpath('logs').mkdir()
+
+        if not profile_appdata.joinpath('savedgames').exists():
+            profile_appdata.joinpath('savedgames').mkdir()
+
+        if not profile_appdata.joinpath('shaders_cache').exists():
+            profile_appdata.joinpath('shaders_cache').mkdir()
+
+        if not profile_appdata.joinpath('screenshots').exists():
+            profile_appdata.joinpath('screenshots').mkdir()
+
+        if not profile_appdata.joinpath('user.ltx').exists():
+            (Path(  profile_appdata / "user.ltx"  )).write_text(" ")
+
 
     def mappings(self) -> List[mobase.Mapping]:
         appdata = self.gameDirectory().filePath("appdata")
