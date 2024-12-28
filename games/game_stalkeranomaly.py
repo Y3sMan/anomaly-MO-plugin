@@ -330,13 +330,11 @@ class StalkerAnomalyGame(BasicGame, mobase.IPluginFileMapper):
 
     def init(self, organizer: mobase.IOrganizer):
         BasicGame.init(self, organizer)
-        self._featureMap[mobase.ModDataChecker] = StalkerAnomalyModDataChecker()
-        self._featureMap[mobase.ModDataContent] = StalkerAnomalyModDataContent()
+        self._register_feature( StalkerAnomalyModDataChecker())
+        self._register_feature( StalkerAnomalyModDataContent())
         ## TODO: reimplement save game info
         # self._featureMap[mobase.SaveGameInfo] = StalkerAnomalySaveGameInfo()
-        self._featureMap[mobase.LocalSavegames] = StalkerAnomalyLocalSavegames(
-            self.savesDirectory()
-        )
+        self._register_feature( StalkerAnomalyLocalSavegames( self.savesDirectory()))
         self._register_event_handler()
         self.localsaves = False
         return True
@@ -354,9 +352,7 @@ class StalkerAnomalyGame(BasicGame, mobase.IPluginFileMapper):
         return appdata.exists()
 
     def initializeProfile(self, directory: QDir, settings: mobase.ProfileSetting):
-        self._featureMap[mobase.LocalSavegames] = StalkerAnomalyLocalSavegames(
-            self.savesDirectory()
-        )
+        self._register_feature( StalkerAnomalyLocalSavegames( self.savesDirectory()))
 
         super().initializeProfile(directory, settings)
 
